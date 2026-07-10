@@ -75,7 +75,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length){
   Serial.print("MQTT Topic: ");
   Serial.println(topic);
 
-  if(String(topic) != RELAY_COMMAND_TOPIC){
+  if(strcmp(topic, DEVICE_COMMAND_TOPIC) != 0){
     Serial.println("Ignored unknown topic");
     Serial.println("=================================================");
     return;
