@@ -1,0 +1,10 @@
+#ifndef SECRETS_H
+#define SECRETS_H
+
+#define WIFI_SSID "YOUR_WIFI_NAME"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+#define MQTT_BROKER "192.168.1.XXX"
+#define MQTT_PORT 1883
+
+#endif

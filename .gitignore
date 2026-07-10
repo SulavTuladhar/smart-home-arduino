@@ -1,0 +1,7 @@
+#ESP32 secrets
+arduino_firmware/secrets.h
+
+#Node
+server/node_modules/
+server/dist/
+server/.env
