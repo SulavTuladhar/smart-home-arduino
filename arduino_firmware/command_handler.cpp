@@ -5,26 +5,31 @@
 #include "relay_manager.h"
 
 // Error handlers
-void checkRelayErrors(char channel, bool state){
-  if(!channel.is<int>()) {
+bool checkRelayErrors(const JsonDocument& document, char channel, bool state){
+  JsonVariantConst channelValue = document["channel"];
+  JsonVariantConst stateValue = document["state"];
+  if(!channelValue.is<int>()) {
     Serial.println("Relay command rejected: invalud or missing channel");
     return false;
   }
 
-  if(!state.is<bool>()){
+  if(!stateValue.is<bool>()){
     Serial.println("Relay command rejected: invalud or missng state");
     return false;
   }
+
+  channel = channelValues.as<int>();
+  state = stateValue.as<bool>();
 
   return true;
 }
 
 void handleRelayCommand(JsonDocument& document){
-  int channel = document["channel"];
-  bool state = document["state"];
+  int channel = 0;
+  bool state = false;
 
-  const doesRelayContainsError = checkRelayErros(channel, state);
-  if(doesRelayContainsError){
+  const isRelayComandValid = checkRelayErros(document, channel, state);
+  if(isRelayComandValid){
     return;
   }
 
@@ -39,7 +44,7 @@ void handleRelayCommand(JsonDocument& document){
   return;
 }
 
-void handleCommand(const byte* payload, unsgned int length){
+void handleCommand(const byte* payload, unsigned int length){
   JsonDocument document;
 
   DeserializeError error = deserializeJson(document, payload, length);
