@@ -6,38 +6,39 @@
 #include "mqtt_manager.h"
 
 // Error handlers
-bool checkRelayErrors(const JsonDocument& document, char channel, bool state){
+bool checkRelayErrors(const JsonDocument& document, int& channel, bool& state){
   JsonVariantConst channelValue = document["channel"];
   JsonVariantConst stateValue = document["state"];
+
   if(!channelValue.is<int>()) {
-    Serial.println("Relay command rejected: invalud or missing channel");
+    Serial.println("Relay command rejected: invalid or missing channel");
     return false;
   }
 
   if(!stateValue.is<bool>()){
-    Serial.println("Relay command rejected: invalud or missng state");
+    Serial.println("Relay command rejected: invalid or missng state");
     return false;
   }
 
-  channel = channelValues.as<int>();
+  channel = channelValue.as<int>();
   state = stateValue.as<bool>();
 
   return true;
 }
 
-void handleRelayCommand(JsonDocument& document){
+void handleRelayCommand(const JsonDocument& document){
   int channel = 0;
   bool state = false;
 
-  const isRelayComandValid = checkRelayErros(document, channel, state);
-
-  if(isRelayComandValid){
+  bool isRelayCommandValid = checkRelayErrors(document, channel, state);
+  
+  if(!isRelayCommandValid){
     return;
   }
 
   bool success = setRelay(channel, state, "MQTT");
 
-  if(!succes){
+  if(!success){
     Serial.println("Relay command failed");
     return;
   }
@@ -55,7 +56,7 @@ void handleRelayCommand(JsonDocument& document){
 void handleCommand(const byte* payload, unsigned int length){
   JsonDocument document;
 
-  DeserializeError error = deserializeJson(document, payload, length);
+  DeserializationError error = deserializeJson(document, payload, length);
 
   if(error){
     Serial.print("Command JSO error: ");
