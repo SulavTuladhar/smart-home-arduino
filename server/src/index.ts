@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { AppDataSource } from "./data-source";
 import motionRouter from "./routes/motion";
-import "./libs/mqtt";
+import { startMqttSubscriber } from "./modules/mqtt/mqtt.subscriber";
 
 dotenv.config();
 
@@ -11,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+startMqttSubscriber();
 app.use("/motion", motionRouter);
 
 app.get("/health", (_req, res) => {
