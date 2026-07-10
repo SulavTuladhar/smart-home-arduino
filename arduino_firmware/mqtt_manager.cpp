@@ -75,7 +75,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length){
   Serial.print("MQTT Topic: ");
   Serial.println(topic);
 
-  if(String(topic) != RELAY_COMMAND_TOPIC){
+  if(strcmp(topic, DEVICE_COMMAND_TOPIC) != 0){
     Serial.println("Ignored unknown topic");
     Serial.println("=================================================");
     return;
@@ -153,4 +153,39 @@ void publishMotionEvent(int motionCount, bool relayState){
 
 bool isMQTTConnected(){
   return mqtt.connected();
+}
+
+bool publishRelayState(int channel, bool state){
+
+  if(!mqtt.connected()){
+    Serial.println("Cannot publish relay state: MQTT offline");
+    return false;
+  }
+
+  StaticJsonDocument<256> document;
+
+  document["device_id"] = DEVICE_ID;
+  document["channel"] = channel;
+  document["state"] = state;
+
+  char payload[256];
+
+  size_t payloadLength = serializeJson(document, payload, sizeof(payload));
+
+  if(payloadLength == 0){
+    Serial.println("Failed to serialize relay state");
+    return false;
+  }
+
+  bool published = mqtt.publish(DEVICE_STATE_TOPIC, payload, true);
+
+  if(!published){
+    Serial.println("Failed to publish relay state");
+    return false;
+  }
+
+  Serial.print("Relay state published: ");
+  Serial.print(payload);
+
+  return true;
 }

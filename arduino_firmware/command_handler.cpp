@@ -3,6 +3,7 @@
 
 #include "command_handler.h"
 #include "relay_manager.h"
+#include "mqtt_manager.h"
 
 // Error handlers
 bool checkRelayErrors(const JsonDocument& document, char channel, bool state){
@@ -29,6 +30,7 @@ void handleRelayCommand(JsonDocument& document){
   bool state = false;
 
   const isRelayComandValid = checkRelayErros(document, channel, state);
+
   if(isRelayComandValid){
     return;
   }
@@ -38,6 +40,12 @@ void handleRelayCommand(JsonDocument& document){
   if(!succes){
     Serial.println("Relay command failed");
     return;
+  }
+
+  bool statePublished = publishRelayState(channel, state);
+
+  if(!statePublished){
+    Serial.println("Relay changed, but state publishing failed");
   }
 
   Serial.println("Relay command completed");
