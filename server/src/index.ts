@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import express from "express";
 import "reflect-metadata";
 import { AppDataSource } from "./database/data-source";
-import { startMqttSubscriber } from "./modules/mqtt/mqtt.subscriber";
-import { relayRouter } from "./modules/relays/relay.routes";
+import { startMqttSubscriber } from "./infrastructure/mqtt/mqtt.subscriber";
+import { relayRouter } from "./modules/relays/presentation/http/relay.routes";
 
 dotenv.config();
 

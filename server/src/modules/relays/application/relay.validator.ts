@@ -1,4 +1,4 @@
-import { SetRelayStateBody } from "./relay.types";
+import { SetRelayStateBody } from "../domain/relay.types";
 
 export function isSetRelayStateBody(
     value: unknown

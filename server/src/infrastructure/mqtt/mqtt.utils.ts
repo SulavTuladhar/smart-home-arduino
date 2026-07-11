@@ -1,4 +1,4 @@
-import { DeviceRegisteration, DeviceRegistrationPayload } from "../device/device.types";
+import { DeviceRegisteration, DeviceRegistrationPayload } from "../../modules/device/domain/device.types";
 
 export function isDeviceStateTopic(topic: string): boolean {
     const topicParts = topic.split("/");

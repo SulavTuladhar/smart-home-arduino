@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from "typeorm";
-import { BaseEntity } from "../../database/entities/base.entity";
-import { Relay } from "../relays/relay.entity";
+import { BaseEntity } from "../../../database/entities/base.entity";
+import { Relay } from "../../relays/domain/relay.entity";
 
 @Entity("devices")
 export class Device extends BaseEntity{

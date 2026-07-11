@@ -1,8 +1,8 @@
-import { AppDataSource } from "../../database/data-source";
-import { RelayService } from "../relays/relay.service";
-import { Device } from "./device.entity";
-import { DeviceRepository, deviceRepository } from "./device.repository";
-import { DeviceRegisteration } from "./device.types";
+import { AppDataSource } from "../../../database/data-source";
+import { RelayService } from "../../relays/application/relay.service";
+import { Device } from "../domain/device.entity";
+import { DeviceRegisteration } from "../domain/device.types";
+import { DeviceRepository } from "../infrastructure/device.repository";
 
 export class DeviceService {    
     constructor(
@@ -23,7 +23,7 @@ export class DeviceService {
             device.relayCount = registration.relayCount;
             device.online = true;
 
-            device = await deviceRepository.save(device, manager);
+            device = await this.deviceRepository.save(device, manager);
             await this.relayService.syncRelays(device, registration, manager);
 
             console.log(`Device ${registration.deviceId} registered with ${registration.relayCount} relays`);

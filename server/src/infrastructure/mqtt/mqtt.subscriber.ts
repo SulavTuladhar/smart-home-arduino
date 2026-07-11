@@ -1,5 +1,5 @@
-import { container } from "../../container";
-import { MQTT_TOPICS } from "../../libs/constants";
+import { container } from "../../app/container";
+import { MQTT_TOPICS } from "../../shared/constants";
 import { mqttClient } from "./mqtt.client";
 import { isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
 import { isRelayStateMessage } from "./mqtt.validator";
