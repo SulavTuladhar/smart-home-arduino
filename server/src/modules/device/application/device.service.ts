@@ -53,4 +53,19 @@ export class DeviceService {
     async deviceOnline(){}
 
     async deviceOffline(){}
+
+    // http services
+    async getAllDevices(): Promise<Device[]>{
+        return this.deviceRepository.findAll();
+    }
+
+    async getDeviceById(deviceId: string): Promise<Device>{
+        const device = await this.deviceRepository.findByDeviceId(deviceId);
+
+        if(!device){
+            throw new Error(`Device ${deviceId} not found`);
+        }
+
+        return device;
+    }
 }

@@ -3,77 +3,83 @@ import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
 import { DeviceService } from "../modules/device/application/device.service";
 import { DeviceRepository } from "../modules/device/infrastructure/device.repository";
+import { DeviceController } from "../modules/device/presentation/http/controllers/device.controller";
 import { RelayService } from "../modules/relays/application/relay.service";
 import { RelayRepository } from "../modules/relays/infrastructure/relay.repository";
-import { RelayController } from "../modules/relays/presentation/http/relay.controller";
+import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
 
 export class ApplicationContainer {
-    readonly repositories: {
+    repositories!: {
         deviceRepository: DeviceRepository,
         relayRepository: RelayRepository
     };
 
-    readonly services: {
+    services!: {
         deviceService: DeviceService,
         relayService: RelayService
     }
 
-    readonly controllers: {
+    controllers!: {
+        deviceController: DeviceController,
         relayController: RelayController
     }
 
-    readonly infrastructure: {
+    infrastructures!: {
         mqttClient: ReturnType<typeof createMqttClient>;
         mqttPublisher: MqttPublisher
     }
 
-    readonly monitoring: {
+    monitoring!: {
         deviceOfflineMonitor: DeviceOfflineMonitor
     }
 
     constructor(){
-        const deviceRepository = new DeviceRepository();
-        const relayRepository = new RelayRepository();
+        this.initizeRepositories();
+        this.initializeInfrastructures();
+        this.initializeServices();
+        this.initalizeControllers();
+        this.initializeMonitoring();
+    }
 
-        const mqttClient = createMqttClient();
-        const mqttPublisher = new MqttPublisher(mqttClient);
-
-        const relayService = new RelayService(
-            relayRepository,
-            mqttPublisher
-        );
-
-        const deviceService = new DeviceService(
-            deviceRepository,
-            relayService
-        );
-
-        const relayController = new RelayController(relayService);
-
-
-        const deviceOfflineMonitor = new DeviceOfflineMonitor(deviceService);
-
+    private initizeRepositories(): void {
         this.repositories = {
-            deviceRepository,
-            relayRepository
-        }
+            deviceRepository: new DeviceRepository(),
+            relayRepository: new RelayRepository()
+        };
+    }
 
-        this.services = {
-            deviceService,
-            relayService
-        }
-
-        this.controllers = {
-            relayController
-        }
-
-        this.infrastructure = {
+    private initializeInfrastructures(): void {
+        const mqttClient = createMqttClient();
+        this.infrastructures = {
             mqttClient,
-            mqttPublisher
-        }
-
-        this.monitoring = {
-            deviceOfflineMonitor
+            mqttPublisher: new MqttPublisher(mqttClient)
         }
     }
+
+    private initializeServices(): void {
+        const relayService = new RelayService(
+            this.repositories.relayRepository,
+            this.infrastructures.mqttPublisher
+        );
+        const deviceService = new DeviceService(this.repositories.deviceRepository, relayService);
+
+        this.services = {
+            relayService,
+            deviceService
+        }
+    }
+
+    private initalizeControllers(): void {
+        this.controllers = {
+            relayController: new RelayController(this.services.relayService),
+            deviceController: new DeviceController(this.services.deviceService)
+        }
+    }
+
+    private initializeMonitoring(): void {
+        this.monitoring = {
+            deviceOfflineMonitor: new DeviceOfflineMonitor(this.services.deviceService)
+        }
+    }
+
 }

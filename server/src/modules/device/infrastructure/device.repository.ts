@@ -64,6 +64,17 @@ export class DeviceRepository extends BaseRepository<Device>{
 
         return result.affected ?? 0;
     }
+
+    // http methods
+    async findAll(
+        manager?: EntityManager
+    ): Promise<Device[]>{
+        return this.getRepository(manager).find({
+            order: {
+                room: "ASC"
+            }
+        })
+    }
 }
 
 export const deviceRepository = new DeviceRepository();
