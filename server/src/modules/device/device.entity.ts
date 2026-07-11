@@ -1,5 +1,6 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { BaseEntity } from "../../database/entities/base.entity";
+import { Relay } from "../relays/relay.entity";
 
 @Entity("devices")
 export class Device extends BaseEntity{
@@ -21,4 +22,7 @@ export class Device extends BaseEntity{
         default: true
     })
     online!: boolean;
+
+    @OneToMany(() => Relay, (relay) => relay.deviceId)
+    relays!: Relay[];
 }

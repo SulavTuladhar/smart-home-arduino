@@ -23,7 +23,7 @@ export class DeviceService {
             let relay = await relayRepository.findByDeviceAndChannel(registration.deviceId, relayRegistration.channel);
             if(!relay){
                 relay = new Relay();
-                relay.deviceId =  registration.deviceId;
+                relay.device = device;
                 relay.channel = relayRegistration.channel;
                 relay.name = `Relay-${relayRegistration.channel}`;
                 relay.desiredState = false;
