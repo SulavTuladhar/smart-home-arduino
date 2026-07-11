@@ -22,5 +22,6 @@ const int RELAY_PINS[] ={
 #define DEVICE_REGISTER_TOPIC "home/register"
 #define MOTION_TOPIC "home/livingroom/motion"
 #define DEVICE_COMMAND_TOPIC "home/livingroom/device/set"
+#define DEVICE_STATE_TOPIC "home/livingroom/device/state"
 
 #endif

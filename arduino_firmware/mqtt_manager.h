@@ -12,4 +12,6 @@ void publishMotionEvent(int motionCount, bool relayState);
 void mqttLoop();
 
 bool isMQTTConnected();
+bool publishRelayState(int channel, bool state);
+
 #endif
