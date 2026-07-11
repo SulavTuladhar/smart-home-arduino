@@ -1,5 +1,6 @@
 import { AppDataSource } from "../../database/data-source";
 import { Relay } from "./relay.entity";
+import { RelaySyncConfiguration } from "./relay.types";
 
 export class RelayRepository {
     private readonly repository = AppDataSource.getRepository(Relay);
@@ -18,10 +19,15 @@ export class RelayRepository {
         });
     }
 
-    async findAllByDeviceId(deviceId: string): Promise<Relay[]>{
+    async findAllByDeviceId(hardwareDeviceId: string): Promise<Relay[]>{
         return this.repository.find({
             where: {
-                deviceId
+                device: {
+                    deviceId: hardwareDeviceId
+                }
+            },
+            relations: {
+                device: true
             },
             order: {
                 channel: "ASC"
@@ -42,6 +48,17 @@ export class RelayRepository {
 
         relay.acutalState = state;
         await this.repository.save(relay);
+    }
+
+    async remove(relay: Relay): Promise<void>{
+        await this.repository.remove(relay);
+    }
+
+    async updateConfiguration(relay: Relay, configuration: RelaySyncConfiguration): Promise<Relay> {
+        relay.gpio = configuration.gpio;
+        relay.enabled = configuration.enabled;
+
+        return await this.repository.save(relay);
     }
 }
 
