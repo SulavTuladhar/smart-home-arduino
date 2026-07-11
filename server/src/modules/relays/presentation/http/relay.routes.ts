@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { ApplicationContainer } from "../../../../app/application.container";
+import { RelayController } from "./relay.controller";
 
-const container = new ApplicationContainer();
- 
-export const relayRouter = Router();
+export class RelayRoutes {
+    static create(
+        controller: RelayController
+    ): Router {
+        const router = Router();
 
-const { setRelayState } = container.controllers.relayController;
-
-relayRouter.post("/devices/:deviceId/relays/:channel/state", setRelayState);
+        router.post("/devices/:deviceId/relays/:channel/state", controller.setRelayState);
+        
+        return router
+    }
+}
