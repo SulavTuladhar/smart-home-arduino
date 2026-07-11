@@ -1,6 +1,5 @@
+import { container } from "../../container";
 import { MQTT_TOPICS } from "../../libs/constants";
-import { deviceService } from "../device/device.service";
-import { relayService } from "../relays/relay.service";
 import { mqttClient } from "./mqtt.client";
 import { isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
 import { isRelayStateMessage } from "./mqtt.validator";
@@ -33,7 +32,7 @@ export function startMqttSubscriber(): void {
           return;
         }
         const registration = mapDeviceRegistration(parsedPayload)
-        await deviceService.registerDevice(registration);
+        await container.services.deviceService.registerDevice(registration);
         return;
       }
 
@@ -44,7 +43,7 @@ export function startMqttSubscriber(): void {
           return;
         }
         try{
-          await relayService.updateRelayState(parsedPayload);
+          await container.services.relayService.updateRelayState(parsedPayload);
           console.info("Relay state saved successfully");
         }catch(err){
           console.error("Failed to update relay state");
