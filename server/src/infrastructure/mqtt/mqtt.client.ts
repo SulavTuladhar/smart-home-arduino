@@ -1,25 +1,34 @@
 import dotenv from "dotenv";
-import mqtt from 'mqtt';
+import mqtt, { MqttClient } from 'mqtt';
 
 dotenv.config();
 
 const brokerUrl = `mqtt://${process.env.MQTT_BROKER_HOST}:${process.env.MQTT_BROKER_PORT}`;
 
-export const mqttClient = mqtt.connect(brokerUrl, {
-    clientId: `server-${Date.now()}`,
-    clean: true,
-    reconnectPeriod: 1000,
-});
+if(!brokerUrl){
+    throw new Error("Boker URL must be configured");
+}
 
-mqttClient.on("connect", () => {
-    console.info("Connected to MQTT broker");
-});
+export function createMqttClient():
+MqttClient {
+    const client = mqtt.connect(brokerUrl, {
+        clientId: `server-${Date.now()}`,
+        clean: true,
+        reconnectPeriod: 1000
+    });
 
-mqttClient.on("reconnect", () => {
-    console.info("MQTT reconnecting...");
-});
-
-
-mqttClient.on("error", (error) => {
-    console.info("MQTT connection error:", error);
-});
+    client.on("connect", () => {
+        console.info("Connected to MQTT broker");
+    });
+    
+    client.on("reconnect", () => {
+        console.info("MQTT reconnecting...");
+    });
+    
+    
+    client.on("error", (error) => {
+        console.info("MQTT connection error:", error);
+    });
+    
+    return client;
+};
