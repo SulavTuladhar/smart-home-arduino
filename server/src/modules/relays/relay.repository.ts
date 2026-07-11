@@ -1,12 +1,19 @@
+import { EntityManager } from "typeorm";
+import { BaseRepository } from "../../database/base.repository";
 import { AppDataSource } from "../../database/data-source";
 import { Relay } from "./relay.entity";
 import { RelaySyncConfiguration } from "./relay.types";
 
-export class RelayRepository {
-    private readonly repository = AppDataSource.getRepository(Relay);
+export class RelayRepository extends BaseRepository<Relay> {
+    constructor(){
+        super(
+            Relay,
+            AppDataSource.getRepository(Relay)
+        )
+    }
 
-    async findByDeviceAndChannel(hardwareDeviceId: string, channel: number): Promise<Relay | null>{
-        return this.repository.findOne({
+    async findByDeviceAndChannel(hardwareDeviceId: string, channel: number, manager?: EntityManager): Promise<Relay | null>{
+        return this.getRepository(manager).findOne({
             where: {
                 device: {
                     deviceId: hardwareDeviceId
@@ -19,8 +26,8 @@ export class RelayRepository {
         });
     }
 
-    async findAllByDeviceId(hardwareDeviceId: string): Promise<Relay[]>{
-        return this.repository.find({
+    async findAllByDeviceId(hardwareDeviceId: string, manager?: EntityManager): Promise<Relay[]>{
+        return this.getRepository(manager).find({
             where: {
                 device: {
                     deviceId: hardwareDeviceId
@@ -35,30 +42,22 @@ export class RelayRepository {
         });
     }
 
-    async save(relay: Relay): Promise<Relay>{
-        return this.repository.save(relay);
-    }
-
-    async updateState(hardwareDeviceId: string, channel: number, state: boolean): Promise<void>{
-        const relay = await this.findByDeviceAndChannel(hardwareDeviceId, channel);
+    async updateState(hardwareDeviceId: string, channel: number, state: boolean, manager?: EntityManager): Promise<void>{
+        const relay = await this.findByDeviceAndChannel(hardwareDeviceId, channel, manager);
 
         if(!relay){
             throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
         }
 
-        relay.acutalState = state;
-        await this.repository.save(relay);
+        relay.actualState = state;
+        await this.save(relay, manager);
     }
 
-    async remove(relay: Relay): Promise<void>{
-        await this.repository.remove(relay);
-    }
-
-    async updateConfiguration(relay: Relay, configuration: RelaySyncConfiguration): Promise<Relay> {
+    async updateConfiguration(relay: Relay, configuration: RelaySyncConfiguration, manager?: EntityManager): Promise<Relay> {
         relay.gpio = configuration.gpio;
         relay.enabled = configuration.enabled;
 
-        return await this.repository.save(relay);
+        return await this.save(relay, manager);
     }
 }
 

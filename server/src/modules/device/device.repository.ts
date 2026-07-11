@@ -1,15 +1,22 @@
+import { EntityManager } from "typeorm";
+import { BaseRepository } from "../../database/base.repository";
 import { AppDataSource } from "../../database/data-source";
 import { Device } from "./device.entity";
 
-export class DeviceRepository {
-    private readonly repository = AppDataSource.getRepository(Device);
-
-    async findByDeviceId(deviceId: string): Promise<Device | null> {
-        return await this.repository.findOne({where: {deviceId}});
+export class DeviceRepository extends BaseRepository<Device>{
+    constructor(){
+        super(
+            Device,
+            AppDataSource.getRepository(Device)
+        )
     }
 
-    async save(device: Device): Promise<Device> {
-        return await this.repository.save(device);
+    async findByDeviceId(deviceId: string, manager?: EntityManager): Promise<Device | null> {
+        return this.getRepository(manager).findOne({
+            where: {
+                deviceId
+            }
+        })
     }
 }
 

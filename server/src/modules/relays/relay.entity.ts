@@ -40,9 +40,9 @@ export class Relay extends BaseEntity{
     desiredState!: boolean;
 
     @Column({
-        name: "acutal_state",
+        name: "actual_state",
         default: false
     })
-    acutalState!: boolean;
+    actualState!: boolean;
 
 }
