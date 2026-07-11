@@ -1,14 +1,15 @@
-import { EntityManager, Repository } from "typeorm";
+import { EntityManager } from "typeorm";
+import { BaseRepository } from "../../database/base.repository";
 import { AppDataSource } from "../../database/data-source";
 import { Relay } from "./relay.entity";
 import { RelaySyncConfiguration } from "./relay.types";
 
-export class RelayRepository {
-    private readonly repository = AppDataSource.getRepository(Relay);
-
-    private getRepository(manager?: EntityManager): Repository<Relay>{
-        if(manager) return manager.getRepository(Relay);
-        return this.repository;
+export class RelayRepository extends BaseRepository<Relay> {
+    constructor(){
+        super(
+            Relay,
+            AppDataSource.getRepository(Relay)
+        )
     }
 
     async findByDeviceAndChannel(hardwareDeviceId: string, channel: number, manager?: EntityManager): Promise<Relay | null>{
@@ -41,10 +42,6 @@ export class RelayRepository {
         });
     }
 
-    async save(relay: Relay, manager?: EntityManager): Promise<Relay>{
-        return this.getRepository(manager).save(relay);
-    }
-
     async updateState(hardwareDeviceId: string, channel: number, state: boolean, manager?: EntityManager): Promise<void>{
         const relay = await this.findByDeviceAndChannel(hardwareDeviceId, channel, manager);
 
@@ -52,19 +49,15 @@ export class RelayRepository {
             throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
         }
 
-        relay.acutalState = state;
-        await this.getRepository(manager).save(relay);
-    }
-
-    async remove(relay: Relay, manager?: EntityManager): Promise<void>{
-        await this.getRepository(manager).remove(relay);
+        relay.actualState = state;
+        await this.save(relay, manager);
     }
 
     async updateConfiguration(relay: Relay, configuration: RelaySyncConfiguration, manager?: EntityManager): Promise<Relay> {
         relay.gpio = configuration.gpio;
         relay.enabled = configuration.enabled;
 
-        return await this.getRepository(manager).save(relay);
+        return await this.save(relay, manager);
     }
 }
 

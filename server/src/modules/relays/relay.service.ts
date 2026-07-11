@@ -41,7 +41,7 @@ export class RelayService {
         relay.name = `Relay-${relayRegistration.channel}`;
         relay.enabled = true;
         relay.desiredState = false;
-        relay.acutalState = false;
+        relay.actualState = false;
 
         await relayRepository.save(relay, manager);
         console.info(`Created relay ${relay.channel} on GPIO ${relay.gpio}`);
