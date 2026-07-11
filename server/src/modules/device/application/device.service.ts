@@ -1,4 +1,5 @@
 import { AppDataSource } from "../../../database/data-source";
+import { DeviceHeartbeat } from "../../../infrastructure/mqtt/mqtt.types";
 import { RelayService } from "../../relays/application/relay.service";
 import { Device } from "../domain/device.entity";
 import { DeviceRegisteration } from "../domain/device.types";
@@ -30,7 +31,24 @@ export class DeviceService {
         })
     }
 
-    async heartbeat(){}
+    async recordHeartbeat(heartbeat: DeviceHeartbeat): Promise<void>{
+        await this.deviceRepository.updateHeartbeat(
+            heartbeat.deviceId,
+            {
+                uptime: heartbeat.uptime,
+                freeHeap: heartbeat.freeHeap,
+                wifiRssi: heartbeat.wifiRssi
+            }
+        );
+
+        console.info(`Heartbeat recorded for ${heartbeat.deviceId}`);
+    }
+
+    async markStaleDevicesOffline(timeoutMilliSeconds: number): Promise<number>{
+        const threshold = new Date(Date.now() - timeoutMilliSeconds);
+
+        return this.deviceRepository.markDevicesOfflineBefore(threshold);
+    }
 
     async deviceOnline(){}
 

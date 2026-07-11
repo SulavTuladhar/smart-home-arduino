@@ -1,4 +1,5 @@
 import { DeviceRegisteration, DeviceRegistrationPayload } from "../../modules/device/domain/device.types";
+import { DeviceHeartbeat, DeviceHeartbeatPayload } from "./mqtt.types";
 
 export function isDeviceStateTopic(topic: string): boolean {
     const topicParts = topic.split("/");
@@ -83,4 +84,29 @@ export function mapDeviceRegistration(
     relayCount: payload.relay_count,
     relays: payload.relays,
   };
+}
+
+export function mapDeviceHeartbeat(
+  payload: DeviceHeartbeatPayload
+): DeviceHeartbeat {
+  return {
+    deviceId: payload.device_id,
+    uptime: payload.uptime,
+    freeHeap: payload.free_heap,
+    wifiRssi: payload.wifi_rssi
+  }
+}
+
+export function isDeviceHeartbeatTopic(
+  topic: string
+): boolean {
+  const parts = topic.split("/");
+
+  return (
+    parts.length === 4 && 
+    parts[0] === "home" &&
+    parts[1].length > 0 &&
+    parts[2] === "device" &&
+    parts[3] === "heartbeat"
+  );
 }

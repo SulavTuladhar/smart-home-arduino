@@ -1,19 +1,19 @@
 import { container } from "../../app/container";
 import { MQTT_TOPICS } from "../../shared/constants";
-import { isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
-import { isRelayStateMessage } from "./mqtt.validator";
+import { isDeviceHeartbeatTopic, isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceHeartbeat, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
+import { isDeviceHeartbeatPayload, isRelayStateMessage } from "./mqtt.validator";
 import type { MqttClient } from "mqtt";
 
 export function startMqttSubscriber(
   mqttClient: MqttClient
 ): void {
     const subscribeToTopics = (): void => {
-      mqttClient.subscribe([MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC], (error, granted) => {
+      mqttClient.subscribe([MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC, MQTT_TOPICS.DEVICE_HEARTBEAT_TOPIC], (error, granted) => {
         if (error){ 
             console.error("MQTT subscription failed:", error.message); 
             return; 
         }
-        console.info("MQTT subscribed to:", [MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC]);
+        console.info("MQTT subscribed to:", [MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC, MQTT_TOPICS.DEVICE_HEARTBEAT_TOPIC]);
         console.info("MQTT subscription granted:", granted);
       });
     }
@@ -55,6 +55,17 @@ export function startMqttSubscriber(
         }catch(err){
           console.error("Failed to update relay state");
         }
+        return;
+      }
+
+      if(isDeviceHeartbeatTopic(topic)){
+        if(!isDeviceHeartbeatPayload(parsedPayload)){
+          console.error("Invalid device heartbeat payload", parsedPayload);
+          return;
+        }
+
+        const heartbeat = mapDeviceHeartbeat(parsedPayload);
+        await container.services.deviceService.recordHeartbeat(heartbeat);
         return;
       }
 

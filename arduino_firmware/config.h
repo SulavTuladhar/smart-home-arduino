@@ -20,7 +20,7 @@ const int RELAY_PINS[] ={
 #define MQTT_RETRY_INTERVAL 5000
 #define HEARTBEAT_INTERVAL 30000
 
-#define DEVICE_HEARTBEAT_TOPIC "home/livingroom/device/hearbeat"
+#define DEVICE_HEARTBEAT_TOPIC "home/livingroom/device/heartbeat"
 #define DEVICE_REGISTER_TOPIC "home/register"
 #define MOTION_TOPIC "home/livingroom/motion"
 #define DEVICE_COMMAND_TOPIC "home/livingroom/device/set"
