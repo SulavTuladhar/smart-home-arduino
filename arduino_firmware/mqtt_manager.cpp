@@ -1,5 +1,6 @@
 // mosquitto_pub -h 192.168.1.122 -p 1883 -t home/livingroom/relay/set -m "{\"channel\":1, \"state\": true}"
 #include <WiFi.h>
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <PubSubClient.h>
 
@@ -187,5 +188,43 @@ bool publishRelayState(int channel, bool state){
   Serial.print("Relay state published: ");
   Serial.print(payload);
 
+  return true;
+}
+
+bool publishHeartbeat(){
+  if(!mqtt.connected()){
+    Serial.println("Cannot publish heartbeat: MQTT offline");
+    return false;
+  }
+
+  StaticJsonDocument<256> document;
+
+  document["device_id"] = DEVICE_ID;
+  document["uptime"] = millis() / 1000;
+  document["free_heap"] = ESP.getFreeHeap();
+  document["wifi_rssi"] = WiFi.RSSI();
+
+  char payload[256];
+
+  size_t payloadLength = serializeJson(document, payload, sizeof(payload));
+
+  if(payloadLength == 0){
+    Serial.println("Failed to serialize heartbeat");
+    return false;
+  }
+
+  bool published = mqtt.publish(
+    DEVICE_HEARTBEAT_TOPIC,
+    payload,
+    false
+  );
+
+  if(!published){
+    Serial.println("Heartbeat publsh failed");
+    return false;
+  }
+
+  Serial.print("Heartbeat published: ");
+  Serial.println(payload);
   return true;
 }

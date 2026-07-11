@@ -1,3 +1,4 @@
+import { DeviceOfflineMonitor } from "../infrastructure/monitoring/device.offline.monitor";
 import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
 import { DeviceService } from "../modules/device/application/device.service";
@@ -17,6 +18,8 @@ const deviceService = new DeviceService(deviceRepository, relayService);
 
 const relayController = new RelayController(relayService);
 
+const deviceOfflineMonitor = new DeviceOfflineMonitor(deviceService);
+
 export const container = {
     repositories: {
         deviceRepository,
@@ -31,6 +34,7 @@ export const container = {
     },
     infrastructure: {
         mqttClient,
-        mqttPublisher
+        mqttPublisher,
+        deviceOfflineMonitor
     }
 }
