@@ -1,5 +1,3 @@
-import { Relay } from "../relays/relay.entity";
-import { relayRepository } from "../relays/relay.repository";
 import { relayService } from "../relays/relay.service";
 import { Device } from "./device.entity";
 import { deviceRepository } from "./device.repository";
