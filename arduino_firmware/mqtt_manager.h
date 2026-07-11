@@ -10,6 +10,7 @@ void setupMQTT();
 void connectMQTT();
 void publishMotionEvent(int motionCount, bool relayState);
 void mqttLoop();
+bool publishHeartbeat();
 
 bool isMQTTConnected();
 bool publishRelayState(int channel, bool state);

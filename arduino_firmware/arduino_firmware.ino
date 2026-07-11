@@ -5,6 +5,7 @@
 #include "mqtt_manager.h"
 #include "relay_manager.h"
 #include "display_manager.h"
+#include "heartbeat_manager.h"
 
 void setup(){
   Serial.begin(115200);
@@ -19,10 +20,12 @@ void setup(){
 
 void loop(){
   mqttLoop();
+  updateHeartbeat();
   updateDisplay(
     isWiFiConnected(),
     isMQTTConnected(),
     isRelayOn(1)
   );
+  delay(10);
   // publishMotionEvent(motionCount, relay1On);
 }
