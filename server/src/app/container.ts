@@ -35,6 +35,9 @@ export const container = {
     infrastructure: {
         mqttClient,
         mqttPublisher,
+    },
+    monitoring: {
         deviceOfflineMonitor
+
     }
 }
