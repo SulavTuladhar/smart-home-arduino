@@ -1,10 +1,10 @@
 import { EntityManager } from "typeorm";
-import { Device } from "../device/device.entity";
-import { DeviceRegisteration } from "../device/device.types";
-import { DeviceStateMessage } from "../mqtt/mqtt.types";
-import { Relay } from "./relay.entity";
-import { RelayRepository } from "./relay.repository";
-import { MqttPublisher } from "../mqtt/mqtt.publisher";
+import { Device } from "../../device/domain/device.entity";
+import { DeviceRegisteration } from "../../device/domain/device.types";
+import { DeviceStateMessage } from "../../../infrastructure/mqtt/mqtt.types";
+import { Relay } from "../domain/relay.entity";
+import { MqttPublisher } from "../../../infrastructure/mqtt/mqtt.publisher";
+import { RelayRepository } from "../infrastructure/relay.repository";
 
 export class RelayService {
     constructor(

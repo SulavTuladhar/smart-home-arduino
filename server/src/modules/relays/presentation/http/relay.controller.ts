@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { isSetRelayStateBody } from "./relay.validator";
-import { container } from "../../container";
-import { RelayService } from "./relay.service";
+import { RelayService } from "../../application/relay.service";
+import { isSetRelayStateBody } from "../../application/relay.validator";
+import { sendError, sendSuccess } from "../../../../shared/http/api.response";
 
 export class RelayController {
     constructor(
@@ -16,49 +16,44 @@ export class RelayController {
         const channel = Number(request.params.channel);
     
         if(!deviceId){
-            response
-                .status(400)
-                .json({
-                    message: "Device ID is required"
-                });
+            sendError(response, 400, "Device ID is required");
             return;
         }
     
         if(!Number.isInteger(channel) || channel < 1){
-            response
-                .status(400)
-                .json({
-                    message: "Channel must be a positive interger"
-                });
+            sendError(response, 400, "Channel must be a positive integer");
             return;
         }
     
         if(!isSetRelayStateBody(request.body)){
-            response    
-                .status(400)
-                .json({
-                    message: "Body must contain a boolean state"
-                });
+            sendError(response, 400, "Body must contain a boolean state");
             return;
         }
     
         try{
             await this.relayService.requestRelayState(deviceId, channel, request.body.state);
     
-            response.status(202)
-                .json({
-                    message: "Relay command accepted",
+            sendSuccess(
+                response, 
+                202, 
+                "Relay command accepted", 
+                {
                     deviceId,
                     channel,
                     requestedState: request.body.state
-                })
+                }
+            );
+
         }catch(error){
             const message = error instanceof Error
                 ? error.message
                 : "Relay command failed"
             
-            const status = message.includes("not found") ? 404 : 409;
-            response.status(status).json({message})
+            sendError(
+                response,
+                message.includes("not found") ? 404 : 409,
+                message
+            );
         }
     }
 }

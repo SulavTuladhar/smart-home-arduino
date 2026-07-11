@@ -1,9 +1,9 @@
-import { DeviceRepository } from "./modules/device/device.repository";
-import { DeviceService } from "./modules/device/device.service";
-import { MqttPublisher } from "./modules/mqtt/mqtt.publisher";
-import { RelayController } from "./modules/relays/relay.controller";
-import { RelayRepository } from "./modules/relays/relay.repository";
-import { RelayService } from "./modules/relays/relay.service";
+import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
+import { DeviceService } from "../modules/device/application/device.service";
+import { DeviceRepository } from "../modules/device/infrastructure/device.repository";
+import { RelayService } from "../modules/relays/application/relay.service";
+import { RelayRepository } from "../modules/relays/infrastructure/relay.repository";
+import { RelayController } from "../modules/relays/presentation/http/relay.controller";
 
 const deviceRepository = new DeviceRepository();
 const relayRepository = new RelayRepository();

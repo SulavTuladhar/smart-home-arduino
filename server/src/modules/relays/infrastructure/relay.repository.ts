@@ -1,8 +1,8 @@
 import { EntityManager } from "typeorm";
-import { BaseRepository } from "../../database/base.repository";
-import { AppDataSource } from "../../database/data-source";
-import { Relay } from "./relay.entity";
-import { RelaySyncConfiguration } from "./relay.types";
+import { BaseRepository } from "../../../database/repositories/base.repository";
+import { Relay } from "../domain/relay.entity";
+import { AppDataSource } from "../../../database/data-source";
+import { RelaySyncConfiguration } from "../domain/relay.types";
 
 export class RelayRepository extends BaseRepository<Relay> {
     constructor(){

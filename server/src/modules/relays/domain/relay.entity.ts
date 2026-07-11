@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
-import { BaseEntity } from "../../database/entities/base.entity";
-import { Device } from "../device/device.entity";
+import { BaseEntity } from "../../../database/entities/base.entity";
+import { Device } from "../../device/domain/device.entity";
 
 @Entity("relays")
 export class Relay extends BaseEntity{

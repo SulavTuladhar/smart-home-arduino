@@ -1,7 +1,7 @@
 import { EntityManager } from "typeorm";
-import { BaseRepository } from "../../database/base.repository";
-import { AppDataSource } from "../../database/data-source";
-import { Device } from "./device.entity";
+import { Device } from "../domain/device.entity";
+import { BaseRepository } from "../../../database/repositories/base.repository";
+import { AppDataSource } from "../../../database/data-source";
 
 export class DeviceRepository extends BaseRepository<Device>{
     constructor(){
