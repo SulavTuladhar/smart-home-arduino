@@ -2,19 +2,25 @@ import { container } from "../../app/container";
 import { MQTT_TOPICS } from "../../shared/constants";
 import { isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
 import { isRelayStateMessage } from "./mqtt.validator";
-import { createMqttClient } from "./mqtt.client";
+import type { MqttClient } from "mqtt";
 
-export function startMqttSubscriber(): void {
-  const mqttClient = createMqttClient();
+export function startMqttSubscriber(
+  mqttClient: MqttClient
+): void {
+    const subscribeToTopics = (): void => {
+      mqttClient.subscribe([MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC], (error, granted) => {
+        if (error){ 
+            console.error("MQTT subscription failed:", error.message); 
+            return; 
+        }
+        console.info("MQTT subscribed to:", [MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC]);
+        console.info("MQTT subscription granted:", granted);
+      });
+    }
+
     mqttClient.on("connect", () => {
-        mqttClient.subscribe([MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC], (error, granted) => {
-            if (error){ 
-                console.error("MQTT subscription failed:", error.message); 
-                return; 
-            }
-            console.info("MQTT subscribed to:", [MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC]);
-            console.info("MQTT subscription granted:", granted);
-        });
+        console.log("Connected to MQTT broker");
+        subscribeToTopics();
     });
 
     
@@ -59,4 +65,9 @@ export function startMqttSubscriber(): void {
       );
     }
   });
+
+  if(mqttClient.connected){
+    console.log("MQTT already connected");
+    subscribeToTopics();
+  }
 }
