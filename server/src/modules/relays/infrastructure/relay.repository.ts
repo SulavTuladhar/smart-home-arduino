@@ -59,6 +59,25 @@ export class RelayRepository extends BaseRepository<Relay> {
 
         return await this.save(relay, manager);
     }
+
+    async findByDeviceId(
+        hardwareDeviceId: string,
+        manager?: EntityManager
+    ): Promise<Relay[]> {
+        return this.getRepository(manager).find({
+            where: {
+                device: {
+                    deviceId: hardwareDeviceId
+                }
+            },
+            relations: {
+                device: true
+            },
+            order: {
+                channel: "ASC"
+            }
+        });
+    }
 }
 
 export const relayRepository = new RelayRepository();

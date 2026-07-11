@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import { RelayService } from "../../application/relay.service";
-import { isSetRelayStateBody } from "../../application/relay.validator";
-import { sendError, sendSuccess } from "../../../../shared/http/api.response";
+import { RelayService } from "../../../application/relay.service";
+import { sendError, sendSuccess } from "../../../../../shared/http/api.response";
+import { isSetRelayStateBody } from "../../../application/relay.validator";
+import { Mapper } from "../../../../../shared/mapper/mapper";
+import { RelayMapper } from "../../../mappers/relay.mapper";
 
 export class RelayController {
     constructor(
@@ -53,6 +55,43 @@ export class RelayController {
                 response,
                 message.includes("not found") ? 404 : 409,
                 message
+            );
+        }
+    }
+
+    getRelays = async (
+        request: Request,
+        response: Response
+    ): Promise<void> => {
+        const {deviceId} = request.params;
+
+        if(!deviceId){
+            sendError(
+                response,
+                400,
+                "Device Id is required"
+            );
+        }
+
+        try{
+            const relays = await this.relayService.getRelaysByDevice(deviceId as string);
+            const responseObj = Mapper.mapList(
+                relays,
+                RelayMapper.toResponse
+            );
+
+            sendSuccess(
+                response,
+                200,
+                "Relays retrived successfully",
+                responseObj
+            );
+
+        } catch(error) {
+            sendError(
+                response,
+                500,
+                error instanceof Error  ? error.message : "Failed to retrieve relays"
             );
         }
     }

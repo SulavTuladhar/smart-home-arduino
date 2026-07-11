@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ApplicationContainer } from "./application.container";
 import { DevicesRoutes } from "../modules/device/presentation/http/routes/device.routes";
-import { RelayRoutes } from "../modules/relays/presentation/http/relay.routes";
+import { RelayRoutes } from "../modules/relays/presentation/http/routes/relay.routes";
 
 export class ApiRouter {
     static create(

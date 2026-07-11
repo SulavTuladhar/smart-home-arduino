@@ -5,8 +5,8 @@ import { DeviceService } from "../modules/device/application/device.service";
 import { DeviceRepository } from "../modules/device/infrastructure/device.repository";
 import { DeviceController } from "../modules/device/presentation/http/controllers/device.controller";
 import { RelayService } from "../modules/relays/application/relay.service";
-import { relayRepository, RelayRepository } from "../modules/relays/infrastructure/relay.repository";
-import { RelayController } from "../modules/relays/presentation/http/relay.controller";
+import { RelayRepository } from "../modules/relays/infrastructure/relay.repository";
+import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
 
 export class ApplicationContainer {
     repositories!: {

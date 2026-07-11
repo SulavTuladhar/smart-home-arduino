@@ -128,4 +128,10 @@ export class RelayService {
             }
         );
     }
+
+    async getRelaysByDevice(
+        deviceId: string
+    ): Promise<Relay[]>{
+        return this.relayRepository.findAllByDeviceId(deviceId);
+    }
 }
