@@ -1,9 +1,9 @@
-import "reflect-metadata";
-import express from "express";
 import dotenv from "dotenv";
+import express from "express";
+import "reflect-metadata";
 import { AppDataSource } from "./database/data-source";
-import motionRouter from "./routes/motion";
 import { startMqttSubscriber } from "./modules/mqtt/mqtt.subscriber";
+import { relayRouter } from "./modules/relays/relay.routes";
 
 dotenv.config();
 
@@ -12,7 +12,8 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 startMqttSubscriber();
-app.use("/motion", motionRouter);
+
+app.use("/api", relayRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });

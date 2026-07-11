@@ -4,9 +4,13 @@ import { DeviceRegisteration } from "../device/device.types";
 import { DeviceStateMessage } from "../mqtt/mqtt.types";
 import { Relay } from "./relay.entity";
 import { RelayRepository } from "./relay.repository";
+import { MqttPublisher } from "../mqtt/mqtt.publisher";
 
 export class RelayService {
-    constructor(private readonly relayRepository: RelayRepository){}
+    constructor(
+        private readonly relayRepository: RelayRepository,
+        private readonly mqttPublisher: MqttPublisher
+    ){}
 
     async updateRelayState(message: DeviceStateMessage): Promise<void> {
         await this.relayRepository.updateState(message.device_id, message.channel, message.state);
@@ -98,5 +102,30 @@ export class RelayService {
         }
     }
 
+    async requestRelayState(
+        hardwareDeviceId: string,
+        channel: number,
+        state: boolean
+    ): Promise<void>{
+        const relay = await this.relayRepository.findByDeviceAndChannel(hardwareDeviceId, channel);
 
+        if(!relay){
+            throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
+        }
+        if(!relay.enabled){
+            throw new Error(`Relay ${channel} is disabled`);
+        }
+
+        relay.desiredState = state;
+
+        await this.relayRepository.save(relay);
+
+        await this.mqttPublisher.publishRelayCommand(
+            relay.device.room,
+            {
+                channel,
+                state
+            }
+        );
+    }
 }

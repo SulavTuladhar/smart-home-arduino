@@ -3,3 +3,8 @@ export interface DeviceStateMessage {
     channel: number;
     state: boolean;
 }
+
+export interface RelayCommand{
+    channel: number;
+    state: boolean;
+}
