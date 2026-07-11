@@ -1,5 +1,6 @@
 import { MQTT_TOPICS } from "../../libs/constants";
 import { deviceService } from "../device/device.service";
+import { relayService } from "../relays/relay.service";
 import { mqttClient } from "./mqtt.client";
 import { isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
 import { isRelayStateMessage } from "./mqtt.validator";
@@ -42,7 +43,12 @@ export function startMqttSubscriber(): void {
           console.error("Payload:", parsedPayload);
           return;
         }
-        // await relayService.updateRelayState(parsedPayload);
+        try{
+          await relayService.updateRelayState(parsedPayload);
+          console.info("Relay state saved successfully");
+        }catch(err){
+          console.error("Failed to update relay state");
+        }
         return;
       }
 

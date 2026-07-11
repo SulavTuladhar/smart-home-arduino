@@ -18,10 +18,6 @@ export class RelayRepository {
         });
     }
 
-    async save(relay: Relay): Promise<Relay>{
-        return this.repository.save(relay);
-    }
-
     async findAllByDeviceId(deviceId: string): Promise<Relay[]>{
         return this.repository.find({
             where: {
@@ -31,6 +27,21 @@ export class RelayRepository {
                 channel: "ASC"
             }
         });
+    }
+
+    async save(relay: Relay): Promise<Relay>{
+        return this.repository.save(relay);
+    }
+
+    async updateState(hardwareDeviceId: string, channel: number, state: boolean): Promise<void>{
+        const relay = await this.findByDeviceAndChannel(hardwareDeviceId, channel);
+
+        if(!relay){
+            throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
+        }
+
+        relay.acutalState = state;
+        await this.repository.save(relay);
     }
 }
 
