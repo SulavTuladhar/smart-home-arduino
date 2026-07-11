@@ -12,14 +12,14 @@ export const mqttClient = mqtt.connect(brokerUrl, {
 });
 
 mqttClient.on("connect", () => {
-    console.log("Connected to MQTT broker");
+    console.info("Connected to MQTT broker");
 });
 
 mqttClient.on("reconnect", () => {
-    console.log("MQTT reconnecting...");
+    console.info("MQTT reconnecting...");
 });
 
 
 mqttClient.on("error", (error) => {
-    console.log("MQTT connection error:", error);
+    console.info("MQTT connection error:", error);
 });

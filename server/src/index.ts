@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import express from "express";
 import dotenv from "dotenv";
-import { AppDataSource } from "./data-source";
+import { AppDataSource } from "./database/data-source";
 import motionRouter from "./routes/motion";
 import { startMqttSubscriber } from "./modules/mqtt/mqtt.subscriber";
 

@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
-import { MotionEvent } from "./entities/MotionEvent";
 
 dotenv.config();
 
@@ -14,5 +13,5 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
-  entities: [MotionEvent],
+  entities: ["src/**/*.entity.ts"],
 });
