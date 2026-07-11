@@ -3,6 +3,7 @@ import express from "express";
 import "reflect-metadata";
 import { Application } from "./app/application";
 import { relayRouter } from "./modules/relays/presentation/http/relay.routes";
+import { container } from "./app/container";
 
 dotenv.config();
 
@@ -17,7 +18,14 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-const application = new Application(app, Number(PORT));
+const application = new Application(
+  app, 
+  Number(PORT),
+  {
+    mqttClient: container.infrastructure.mqttClient,
+    monitors: [container.monitoring.deviceOfflineMonitor]
+  }
+);
 
 application.start().catch(error => {
   console.error(error);

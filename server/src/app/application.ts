@@ -3,22 +3,27 @@ import type { Server } from "http";
 import { AppDataSource } from "../database/data-source";
 import { startMqttSubscriber } from "../infrastructure/mqtt/mqtt.subscriber";
 import { container } from "./container";
+import { ApplicationDependencies } from "./application.types";
 
 export class Application {
     private server?: Server;
 
     constructor(
         private readonly app: Express,
-        private readonly port: number
+        private readonly port: number,
+        private readonly dependencies: ApplicationDependencies
     ){}
 
     async start(): Promise<void> {
         console.info("Starting application...");
+
         await AppDataSource.initialize();
 
-        startMqttSubscriber(container.infrastructure.mqttClient);
+        startMqttSubscriber(this.dependencies.mqttClient);
 
-        container.infrastructure.deviceOfflineMonitor.start();
+        for(const monitor of this.dependencies.monitors){
+            monitor.start();
+        }
 
         await new Promise<void>((resolve) => {
             this.server = this.app.listen(
@@ -37,9 +42,11 @@ export class Application {
     async stop(): Promise<void>{
         console.info("Stopping application...");
 
-        container.infrastructure.deviceOfflineMonitor.stop();
+        for(const monitor of this.dependencies.monitors){
+            monitor.stop();
+        }
 
-        container.infrastructure.mqttClient.end(true);
+        this.dependencies.mqttClient.end(true);
 
         if(this.server){
             await new Promise<void>((resolve, reject) => {
