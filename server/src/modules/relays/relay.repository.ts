@@ -4,11 +4,16 @@ import { Relay } from "./relay.entity";
 export class RelayRepository {
     private readonly repository = AppDataSource.getRepository(Relay);
 
-    async findByDeviceAndChannel(deviceId: string, channel: number): Promise<Relay | null>{
+    async findByDeviceAndChannel(hardwareDeviceId: string, channel: number): Promise<Relay | null>{
         return this.repository.findOne({
             where: {
-                deviceId,
+                device: {
+                    deviceId: hardwareDeviceId
+                },
                 channel
+            },
+            relations: {
+                device: true
             }
         });
     }

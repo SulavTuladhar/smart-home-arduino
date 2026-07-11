@@ -1,11 +1,20 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, RelationId } from "typeorm";
 import { BaseEntity } from "../../database/entities/base.entity";
+import { Device } from "../device/device.entity";
 
 @Entity("relays")
 export class Relay extends BaseEntity{
-    @Column({
-        name: "device_id"
+    @ManyToOne(
+        () => Device, 
+        (device) => device.relays, 
+        {
+        nullable: false,
+        onDelete: "CASCADE"
     })
+    @JoinColumn({name: 'device_id'})
+    device!: Device;
+
+    @RelationId((relay: Relay) => relay.device)
     deviceId!: string;
 
     @Column()
@@ -30,4 +39,5 @@ export class Relay extends BaseEntity{
         default: false
     })
     acutalState!: boolean;
+
 }
