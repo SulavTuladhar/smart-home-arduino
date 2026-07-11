@@ -29,6 +29,11 @@ export class Relay extends BaseEntity{
     name!: string;
 
     @Column({
+        default: true
+    })
+    enabled!: boolean;
+
+    @Column({
         name: "desired_state",
         default: false
     })
