@@ -3,12 +3,14 @@ import express from "express";
 import "reflect-metadata";
 import { Application } from "./app/application";
 import { relayRouter } from "./modules/relays/presentation/http/relay.routes";
-import { container } from "./app/container";
+import { ApplicationContainer } from "./app/application.container";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+const container = new ApplicationContainer();
 
 app.use(express.json());
 
@@ -23,7 +25,7 @@ const application = new Application(
   Number(PORT),
   {
     mqttClient: container.infrastructure.mqttClient,
-    monitors: [container.monitoring.deviceOfflineMonitor]
+    monitors: Object.values(container.monitoring)
   }
 );
 

@@ -1,4 +1,4 @@
-import { container } from "../../app/container";
+import { ApplicationContainer } from "../../app/application.container";
 import { MQTT_TOPICS } from "../../shared/constants";
 import { isDeviceHeartbeatTopic, isDeviceRegistrationPayload, isDeviceStateTopic, mapDeviceHeartbeat, mapDeviceRegistration, parseJsonPayload } from "./mqtt.utils";
 import { isDeviceHeartbeatPayload, isRelayStateMessage } from "./mqtt.validator";
@@ -7,6 +7,7 @@ import type { MqttClient } from "mqtt";
 export function startMqttSubscriber(
   mqttClient: MqttClient
 ): void {
+  const container = new ApplicationContainer();
     const subscribeToTopics = (): void => {
       mqttClient.subscribe([MQTT_TOPICS.DEVICE_REGISTER_TOPIC, MQTT_TOPICS.DEVICE_STATE_TOPIC, MQTT_TOPICS.DEVICE_HEARTBEAT_TOPIC], (error, granted) => {
         if (error){ 

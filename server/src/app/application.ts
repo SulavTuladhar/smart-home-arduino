@@ -2,7 +2,6 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { AppDataSource } from "../database/data-source";
 import { startMqttSubscriber } from "../infrastructure/mqtt/mqtt.subscriber";
-import { container } from "./container";
 import { ApplicationDependencies } from "./application.types";
 
 export class Application {
