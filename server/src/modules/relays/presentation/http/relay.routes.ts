@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { container } from "../../../../app/container";
+import { ApplicationContainer } from "../../../../app/application.container";
 
+const container = new ApplicationContainer();
+ 
 export const relayRouter = Router();
 
 const { setRelayState } = container.controllers.relayController;
