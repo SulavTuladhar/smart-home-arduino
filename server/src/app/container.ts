@@ -1,3 +1,4 @@
+import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
 import { DeviceService } from "../modules/device/application/device.service";
 import { DeviceRepository } from "../modules/device/infrastructure/device.repository";
@@ -8,7 +9,8 @@ import { RelayController } from "../modules/relays/presentation/http/relay.contr
 const deviceRepository = new DeviceRepository();
 const relayRepository = new RelayRepository();
 
-const mqttPublisher = new MqttPublisher();
+const mqttClient = createMqttClient();
+const mqttPublisher = new MqttPublisher(mqttClient);
 
 const relayService = new RelayService(relayRepository, mqttPublisher);
 const deviceService = new DeviceService(deviceRepository, relayService);
@@ -28,6 +30,7 @@ export const container = {
         relayController
     },
     infrastructure: {
+        mqttClient,
         mqttPublisher
     }
 }

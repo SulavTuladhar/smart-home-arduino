@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { AppDataSource } from "./database/data-source";
 import { startMqttSubscriber } from "./infrastructure/mqtt/mqtt.subscriber";
 import { relayRouter } from "./modules/relays/presentation/http/relay.routes";
+import { container } from "./app/container";
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ async function bootstrap() {
     await AppDataSource.initialize();
     console.log("Database connected");
 
-    startMqttSubscriber();
+    startMqttSubscriber(container.infrastructure.mqttClient);
 
     app.listen(PORT as any, "0.0.0.0", () => {
       console.log(`Server running on http://0.0.0.0:${PORT}`);
