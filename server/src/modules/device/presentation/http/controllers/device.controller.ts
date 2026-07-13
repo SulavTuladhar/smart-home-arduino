@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DeviceService } from "../../../application/device.service";
 import { Mapper } from "../../../../../shared/mapper/mapper";
 import { DeviceMapper } from "../../../mappers/device.mapper";
-import { sendError, sendSuccess } from "../../../../../shared/http/api.response";
+import { sendError, sendSuccess } from "../../../../../shared/http/utils/api.response";
 
 export class DeviceController {
     constructor(
