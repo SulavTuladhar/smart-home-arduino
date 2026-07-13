@@ -7,16 +7,22 @@ import { DeviceController } from "../modules/device/presentation/http/controller
 import { RelayService } from "../modules/relays/application/relay.service";
 import { RelayRepository } from "../modules/relays/infrastructure/relay.repository";
 import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
+import { SiteService } from "../modules/site/application/site.service";
+import { SiteRepository } from "../modules/site/infrastructure/site.repository";
+import { UserRepository } from "../modules/user/infrastructure/user.repository";
 
 export class ApplicationContainer {
     repositories!: {
         deviceRepository: DeviceRepository,
-        relayRepository: RelayRepository
+        relayRepository: RelayRepository,
+        siteRepository: SiteRepository,
+        userRepository: UserRepository
     };
 
     services!: {
         deviceService: DeviceService,
-        relayService: RelayService
+        relayService: RelayService,
+        siteService: SiteService
     }
 
     controllers!: {
@@ -44,7 +50,9 @@ export class ApplicationContainer {
     private initizeRepositories(): void {
         this.repositories = {
             deviceRepository: new DeviceRepository(),
-            relayRepository: new RelayRepository()
+            relayRepository: new RelayRepository(),
+            siteRepository: new SiteRepository(),
+            userRepository: new UserRepository()
         };
     }
 
@@ -62,10 +70,12 @@ export class ApplicationContainer {
             this.infrastructures.mqttPublisher
         );
         const deviceService = new DeviceService(this.repositories.deviceRepository, relayService);
+        const siteService = new SiteService(this.repositories.siteRepository, this.repositories.userRepository);
 
         this.services = {
             relayService,
-            deviceService
+            deviceService,
+            siteService
         }
     }
 
