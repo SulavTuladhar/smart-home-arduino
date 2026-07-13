@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { flattenError, type ZodType } from "zod";
+import { type ZodType } from "zod";
 import { sendError } from "../utils/api.response";
+import { formatValidationError } from "./validation.error";
 
 interface ValidationSchemas { 
     body?: ZodType;
@@ -22,7 +23,7 @@ export function validateSchema(schemas: ValidationSchemas){
                     response,
                     400,
                     "Invalid route parameters",
-                    flattenError(result.error)
+                    formatValidationError(result.error)
                 );
                 return
             }
@@ -38,7 +39,7 @@ export function validateSchema(schemas: ValidationSchemas){
                     response,
                     400,
                     "Invalid query paramters",
-                    flattenError(result.error)
+                    formatValidationError(result.error)
                 );
                 return;
             }
@@ -54,7 +55,7 @@ export function validateSchema(schemas: ValidationSchemas){
                     response,
                     400,
                     "Invalid request body",
-                    flattenError(result.error)
+                    formatValidationError(result.error)
                 );
                 return;
             }
