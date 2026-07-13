@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { Application } from "./app/application";
 import { ApplicationContainer } from "./app/application.container";
 import { ApiRouter } from "./app/api.router";
+import { errorHandler } from "./shared/http/middleware/error.handler";
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.use("/api", ApiRouter.create(container));
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.use(errorHandler);
 
 const application = new Application(
   app, 

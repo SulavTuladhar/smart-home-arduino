@@ -20,7 +20,7 @@ export function startMqttSubscriber(
     }
 
     mqttClient.on("connect", () => {
-        console.log("Connected to MQTT broker");
+        console.info("Connected to MQTT broker");
         subscribeToTopics();
     });
 
@@ -79,7 +79,7 @@ export function startMqttSubscriber(
   });
 
   if(mqttClient.connected){
-    console.log("MQTT already connected");
+    console.info("MQTT already connected");
     subscribeToTopics();
   }
 }

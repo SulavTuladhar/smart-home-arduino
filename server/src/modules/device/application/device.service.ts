@@ -1,5 +1,6 @@
 import { AppDataSource } from "../../../database/data-source";
 import { DeviceHeartbeat } from "../../../infrastructure/mqtt/mqtt.types";
+import { NotFoundError } from "../../../shared/errors/not.found.error";
 import { RelayService } from "../../relays/application/relay.service";
 import { Device } from "../domain/device.entity";
 import { DeviceRegisteration } from "../domain/device.types";
@@ -27,7 +28,7 @@ export class DeviceService {
             device = await this.deviceRepository.save(device, manager);
             await this.relayService.syncRelays(device, registration, manager);
 
-            console.log(`Device ${registration.deviceId} registered with ${registration.relayCount} relays`);
+            console.info(`Device ${registration.deviceId} registered with ${registration.relayCount} relays`);
         })
     }
 
@@ -63,7 +64,7 @@ export class DeviceService {
         const device = await this.deviceRepository.findByDeviceId(deviceId);
 
         if(!device){
-            throw new Error(`Device ${deviceId} not found`);
+            throw new NotFoundError(`Device ${deviceId} not found`);
         }
 
         return device;

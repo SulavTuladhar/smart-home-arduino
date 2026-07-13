@@ -1,6 +1,6 @@
-import z, { set } from "zod";
+import z from "zod";
 
-export const RelayParamsSchema = z.object({
+export const relayParamsSchema = z.object({
     deviceId: z
         .string()   
         .trim()
@@ -37,7 +37,7 @@ export const updateRelayBodySchema = z.object({
         }
 );
 
-export type RelayParams = z.infer<typeof RelayParamsSchema>;
+export type RelayParams = z.infer<typeof relayParamsSchema>;
 
 export type SetRelayStateBody = z.infer<typeof setRelayStateBodySchema>;
 
