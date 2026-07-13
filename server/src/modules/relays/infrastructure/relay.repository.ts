@@ -3,6 +3,7 @@ import { Relay } from "../domain/relay.entity";
 import { AppDataSource } from "../../../database/data-source";
 import { RelaySyncConfiguration } from "../domain/relay.types";
 import { BaseRepository } from "../../../database/repositories/base.repository";
+import { NotFoundError } from "../../../shared/errors/not.found.error";
 
 export class RelayRepository extends BaseRepository<Relay> {
     constructor(){
@@ -46,7 +47,7 @@ export class RelayRepository extends BaseRepository<Relay> {
         const relay = await this.findByDeviceAndChannel(hardwareDeviceId, channel, manager);
 
         if(!relay){
-            throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
+            throw new NotFoundError(`Relay ${channel} not found for device ${hardwareDeviceId}`)
         }
 
         relay.actualState = state;

@@ -1,9 +1,11 @@
 import { EntityManager } from "typeorm";
+import { MqttPublisher } from "../../../infrastructure/mqtt/mqtt.publisher";
+import { DeviceStateMessage } from "../../../infrastructure/mqtt/mqtt.types";
+import { ConflictError } from "../../../shared/errors/conflict.error";
+import { NotFoundError } from "../../../shared/errors/not.found.error";
 import { Device } from "../../device/domain/device.entity";
 import { DeviceRegisteration } from "../../device/domain/device.types";
-import { DeviceStateMessage } from "../../../infrastructure/mqtt/mqtt.types";
 import { Relay } from "../domain/relay.entity";
-import { MqttPublisher } from "../../../infrastructure/mqtt/mqtt.publisher";
 import { RelayRepository } from "../infrastructure/relay.repository";
 
 export class RelayService {
@@ -28,7 +30,7 @@ export class RelayService {
 
             await this.disableMissingRelays(registration.deviceId, firmwareChannels, manager);
         }
-        console.log(`Synchronized ${registration.relays.length} relays for ${registration.deviceId}`);
+        console.info(`Synchronized ${registration.relays.length} relays for ${registration.deviceId}`);
     }
 
     private async syncReportedRelay(
@@ -110,10 +112,10 @@ export class RelayService {
         const relay = await this.relayRepository.findByDeviceAndChannel(hardwareDeviceId, channel);
 
         if(!relay){
-            throw new Error(`Relay ${channel} not found for device ${hardwareDeviceId}`);
+            throw new NotFoundError(`Relay ${channel} not found for device ${hardwareDeviceId}`)
         }
         if(!relay.enabled){
-            throw new Error(`Relay ${channel} is disabled`);
+            throw new ConflictError(`Relay ${channel} is disabled`)
         }
 
         relay.desiredState = state;

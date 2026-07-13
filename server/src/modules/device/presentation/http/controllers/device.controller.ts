@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { DeviceService } from "../../../application/device.service";
+import { sendSuccess } from "../../../../../shared/http/response/api.response";
 import { Mapper } from "../../../../../shared/mapper/mapper";
+import { DeviceService } from "../../../application/device.service";
 import { DeviceMapper } from "../../../mappers/device.mapper";
-import { sendError, sendSuccess } from "../../../../../shared/http/utils/api.response";
 
 export class DeviceController {
     constructor(
@@ -29,19 +29,7 @@ export class DeviceController {
         request: Request,
         response: Response
     ): Promise<void> => {
-        const deviceId = request.params.deviceId as string;
-
-        if(!deviceId){
-            sendError(
-                response,
-                404,
-                "Device Id is required"
-            );
-            return;
-        }
-
-        try{
-            const device = await this.deviceService.getDeviceById(deviceId);
+            const device = await this.deviceService.getDeviceById(request.params.deviceId as string);
 
             const responseObj = Mapper.map(
                 device,
@@ -54,13 +42,5 @@ export class DeviceController {
                 "Device retrived sucessfully",
                 responseObj
             );
-        } catch(error) {
-            const message = error instanceof Error ? error.message : "Failed to retrived device";
-            sendError(
-                response,
-                message.includes("not found") ? 404 : 500,
-                message
-            )
-        }
     }
 }
