@@ -1,4 +1,4 @@
-import { authConfig } from "../configuration";
+import { authConfig } from "../configuration/auth.config";
 import { DeviceOfflineMonitor } from "../infrastructure/monitoring/device.offline.monitor";
 import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
@@ -54,9 +54,9 @@ export class ApplicationContainer {
     }
 
     constructor(){
-        this.initilizeCore();
         this.initilizeRepositories();
         this.initializeInfrastructures();
+        this.initilizeCore();
         this.initializeServices();
         this.initalizeControllers();
         this.initializeMonitoring();
@@ -66,7 +66,7 @@ export class ApplicationContainer {
         this.core = {
             clock: new SystemClock(),
             passwordHasher: new BcryptPasswordHasher(authConfig.bcrypt.rounds),
-            tokenProvider: new JwtTokenProvider()
+            tokenProvider: new JwtTokenProvider(authConfig.jwt)
         }
     }
 

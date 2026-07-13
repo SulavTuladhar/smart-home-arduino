@@ -19,9 +19,12 @@ const envSchema = z.object({
     DB_NAME: z.string(),
     MQTT_BROKER_HOST: z.string(),
     MQTT_BROKER_PORT: z.coerce.number(),
-    JWT_SECRET: z.string(),
-    JWT_ACCESS_EXPIRES_IN: z.string(),
-    JWT_REFRESH_EXPIRES_IN: z.string(),
+    JWT_ACCESS_SECRET: z.string().min(32, "JWT_ACCESS_SECRET must contain at least 32 characters"),
+    JWT_REFRESH_SECRET: z.string().min(32, "JWT_REFRESH_SECRET must contain at least 32 characters"),
+    JWT_ACCESS_EXPIRES_IN: z.string().min(1),
+    JWT_REFRESH_EXPIRES_IN: z.string().min(1),
+    JWT_ISSUER: z.string().min(1),
+    JWT_AUDIENCE: z.string().min(1),
     BCRYPT_ROUNDS: z.coerce.number().int().min(4).max(15)
 });
 
