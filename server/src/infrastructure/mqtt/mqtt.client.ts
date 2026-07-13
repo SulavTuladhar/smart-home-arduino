@@ -1,9 +1,7 @@
-import dotenv from "dotenv";
 import mqtt, { MqttClient } from 'mqtt';
+import { mqttConfig } from "../../configuration";
 
-dotenv.config();
-
-const brokerUrl = `mqtt://${process.env.MQTT_BROKER_HOST}:${process.env.MQTT_BROKER_PORT}`;
+const brokerUrl = `mqtt://${mqttConfig.host}:${mqttConfig.port}`;
 
 if(!brokerUrl){
     throw new Error("Boker URL must be configured");

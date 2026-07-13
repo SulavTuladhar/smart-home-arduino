@@ -1,3 +1,4 @@
+import { authConfig } from "../configuration/auth.config";
 import { DeviceOfflineMonitor } from "../infrastructure/monitoring/device.offline.monitor";
 import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
@@ -53,25 +54,19 @@ export class ApplicationContainer {
     }
 
     constructor(){
-        this.initilizeCore();
         this.initilizeRepositories();
         this.initializeInfrastructures();
+        this.initilizeCore();
         this.initializeServices();
         this.initalizeControllers();
         this.initializeMonitoring();
     }
 
     private initilizeCore(): void {
-        const bcryptRounds = Number(process.env.BCRYPT_ROUNDS ?? 12);
-        
-        if(Number.isNaN(bcryptRounds)){
-            throw new Error("Invalid BCRYPT_ROUNDS configuration.");
-        }
-
         this.core = {
             clock: new SystemClock(),
-            passwordHasher: new BcryptPasswordHasher(bcryptRounds),
-            tokenProvider: new JwtTokenProvider()
+            passwordHasher: new BcryptPasswordHasher(authConfig.bcrypt.rounds),
+            tokenProvider: new JwtTokenProvider(authConfig.jwt)
         }
     }
 
