@@ -10,8 +10,21 @@ import { RelayController } from "../modules/relays/presentation/http/controllers
 import { SiteService } from "../modules/site/application/site.service";
 import { SiteRepository } from "../modules/site/infrastructure/site.repository";
 import { UserRepository } from "../modules/user/infrastructure/user.repository";
+import { BcryptPasswordHasher } from "../shared/core/security/password/bcrypt.password.hasher";
+import { PasswordHasher } from "../shared/core/security/password/password.hasher";
+import { JwtTokenProvider } from "../shared/core/security/token/jwt.token.provider";
+import { TokenProvider } from "../shared/core/security/token/token.provider";
+import { Clock } from "../shared/core/time/clock";
+import { SystemClock } from "../shared/core/time/system.clock";
 
 export class ApplicationContainer {
+
+    core!: {
+        clock: Clock,
+        passwordHasher: PasswordHasher;
+        tokenProvider: TokenProvider
+    };
+
     repositories!: {
         deviceRepository: DeviceRepository,
         relayRepository: RelayRepository,
@@ -40,14 +53,29 @@ export class ApplicationContainer {
     }
 
     constructor(){
-        this.initizeRepositories();
+        this.initilizeCore();
+        this.initilizeRepositories();
         this.initializeInfrastructures();
         this.initializeServices();
         this.initalizeControllers();
         this.initializeMonitoring();
     }
 
-    private initizeRepositories(): void {
+    private initilizeCore(): void {
+        const bcryptRounds = Number(process.env.BCRYPT_ROUNDS ?? 12);
+        
+        if(Number.isNaN(bcryptRounds)){
+            throw new Error("Invalid BCRYPT_ROUNDS configuration.");
+        }
+
+        this.core = {
+            clock: new SystemClock(),
+            passwordHasher: new BcryptPasswordHasher(bcryptRounds),
+            tokenProvider: new JwtTokenProvider()
+        }
+    }
+
+    private initilizeRepositories(): void {
         this.repositories = {
             deviceRepository: new DeviceRepository(),
             relayRepository: new RelayRepository(),

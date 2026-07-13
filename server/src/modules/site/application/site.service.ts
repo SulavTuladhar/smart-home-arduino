@@ -31,7 +31,7 @@ export class SiteService{
     async createSite(
         request: CreateSiteRequest
     ): Promise<Site>{
-        const user = await this.userRepository.findByid(request.userId);
+        const user = await this.userRepository.findById(request.userId);
 
         if(!user){
             throw new NotFoundError(`User not found`);

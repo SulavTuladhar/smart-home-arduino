@@ -10,7 +10,7 @@ export class UserRepository extends BaseRepository<User>{
             AppDataSource.getRepository(User)
         )
     }
-    async findByid(
+    async findById(
         id: string,
         manager?: EntityManager
     ){
