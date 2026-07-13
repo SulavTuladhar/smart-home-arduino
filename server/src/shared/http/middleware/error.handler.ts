@@ -4,7 +4,7 @@ import { ErrorRequestHandler } from "express";
 export const errorHandler: ErrorRequestHandler = (error: unknown, _request, response, _next): void => {
     if(error instanceof ApiError){
         response    
-            .status(error.statusCode)
+             .status(error.statusCode)
             .json({
                 success: false,
                 message: error.message,

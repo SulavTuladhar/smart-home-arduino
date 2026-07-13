@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { BaseEntity } from "../../../database/entities/base.entity";
 import { Relay } from "../../relays/domain/relay.entity";
+import { Site } from "../../site/domain/site.entity";
 
 @Entity("devices")
 export class Device extends BaseEntity{
@@ -52,4 +53,20 @@ export class Device extends BaseEntity{
 
     @OneToMany(() => Relay, (relay) => relay.deviceId)
     relays!: Relay[];
+
+    @ManyToOne(
+        () => Site,
+        (site) => site.devices,
+        {
+            nullable: true,
+            onDelete: "CASCADE"
+        }
+    )
+    @JoinColumn({
+        name: "site_id"
+    })
+    site!: Site | null;
+
+    @RelationId((device: Device) => device.site)
+    siteId!: string | null;
 }

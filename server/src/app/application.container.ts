@@ -7,11 +7,13 @@ import { DeviceController } from "../modules/device/presentation/http/controller
 import { RelayService } from "../modules/relays/application/relay.service";
 import { RelayRepository } from "../modules/relays/infrastructure/relay.repository";
 import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
+import { SiteRepository } from "../modules/site/infrastructure/site.repository";
 
 export class ApplicationContainer {
     repositories!: {
         deviceRepository: DeviceRepository,
-        relayRepository: RelayRepository
+        relayRepository: RelayRepository,
+        siteRepository: SiteRepository
     };
 
     services!: {
@@ -44,7 +46,8 @@ export class ApplicationContainer {
     private initizeRepositories(): void {
         this.repositories = {
             deviceRepository: new DeviceRepository(),
-            relayRepository: new RelayRepository()
+            relayRepository: new RelayRepository(),
+            siteRepository: new SiteRepository()
         };
     }
 
