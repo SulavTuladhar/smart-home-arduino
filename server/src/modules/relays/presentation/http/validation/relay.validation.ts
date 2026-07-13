@@ -24,14 +24,14 @@ export const updateRelayBodySchema = z.object({
         .min(1, "Relay name cannot exceed 100 characters")
         .max(100, "Relay name cannot exceed 100 characters")
         .optional(),
-    enable: z
+    enabled: z
         .boolean()
         .optional()
 })
     .strict()
     .refine(body => 
         body.name !== undefined || 
-        body.enable !== undefined, 
+        body.enabled !== undefined, 
         {
             message: "At least one of name or eenabled is required"
         }

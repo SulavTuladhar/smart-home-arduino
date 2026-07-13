@@ -79,6 +79,38 @@ export class RelayRepository extends BaseRepository<Relay> {
             }
         });
     }
+
+    async updateDetails(
+        hardwareDeviceId: string,
+        channel: number,
+        updates: {
+            name?: string;
+            enabled?: boolean;
+        },
+        manager?: EntityManager
+    ): Promise<Relay> {
+        const  relay = await this.findByDeviceAndChannel(
+            hardwareDeviceId,
+            channel,
+            manager
+        );
+
+        if(!relay){
+            throw new NotFoundError(
+                `Relay ${channel} not found for device ${hardwareDeviceId}`
+            );
+        }
+
+        if(updates.name !== undefined){
+            relay.name = updates?.name;
+        }
+
+        if(updates.enabled !== undefined){
+            relay.enabled = updates?.enabled
+        }
+
+        return this.save(relay, manager)
+    }
 }
 
 export const relayRepository = new RelayRepository();

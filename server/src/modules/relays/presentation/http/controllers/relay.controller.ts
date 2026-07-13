@@ -47,4 +47,22 @@ export class RelayController {
             responseObj
         );
     }
+
+    updateRelay = async (
+        request: Request,
+        response: Response
+    ): Promise<void> => {
+        const { deviceId, channel } = request.params;
+
+        const relay = await this.relayService.updatRelayDetails(deviceId as string, Number(channel), request.body);
+
+        const responseObj = RelayMapper.toResponse(relay);
+
+        sendSuccess(
+            response, 
+            200,
+            "Relay updated successfully",
+            responseObj
+        )
+    }
 }
