@@ -136,4 +136,15 @@ export class RelayService {
     ): Promise<Relay[]>{
         return this.relayRepository.findAllByDeviceId(deviceId);
     }
+
+    async updatRelayDetails(
+        hardwareDeviceId: string,
+        channel: number,
+        updates:{
+            name?: string;
+            enabled?: boolean;
+        }
+    ): Promise<Relay> {
+        return this.relayRepository.updateDetails(hardwareDeviceId, channel, updates);
+    }
 }

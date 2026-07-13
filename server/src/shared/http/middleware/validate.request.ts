@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { type ZodType } from "zod";
 import { ValidationError } from "../../errors/validation.error";
 import { formatValidationErrors } from "../validation/validation.error.formatter";
@@ -9,10 +9,10 @@ interface ValidationSchemas {
     query?: ZodType;
 }
 
-export function validateRequest(schemas: ValidationSchemas){
+export function validateRequest(schemas: ValidationSchemas): RequestHandler{
     return (
         request: Request,
-        response: Response,
+        _response: Response,
         next: NextFunction
     ): void => {
         try{
