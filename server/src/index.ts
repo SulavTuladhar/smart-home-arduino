@@ -1,15 +1,12 @@
-import dotenv from "dotenv";
 import express from "express";
 import "reflect-metadata";
 import { Application } from "./app/application";
 import { ApplicationContainer } from "./app/application.container";
 import { ApiRouter } from "./app/api.router";
 import { errorHandler } from "./shared/http/middleware/error.handler";
-
-dotenv.config();
+import { appConfig } from "./configuration";
 
 const app = express();
-const PORT = process.env.PORT;
 
 const container = new ApplicationContainer();
 
@@ -25,7 +22,7 @@ app.use(errorHandler);
 
 const application = new Application(
   app, 
-  Number(PORT),
+  Number(appConfig.port),
   {
     mqttClient: container.infrastructures.mqttClient,
     monitors: Object.values(container.monitoring)
