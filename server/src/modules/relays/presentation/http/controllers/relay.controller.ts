@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RelayService } from "../../../application/relay.service";
-import { sendError, sendSuccess } from "../../../../../shared/http/api.response";
+import { sendError, sendSuccess } from "../../../../../shared/http/utils/api.response";
 import { isSetRelayStateBody } from "../../../application/relay.validator";
 import { Mapper } from "../../../../../shared/mapper/mapper";
 import { RelayMapper } from "../../../mappers/relay.mapper";
