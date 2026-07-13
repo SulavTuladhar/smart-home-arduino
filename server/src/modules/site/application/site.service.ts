@@ -1,6 +1,7 @@
 import { NotFoundError } from "../../../shared/errors/not.found.error";
 import { Site } from "../domain/site.entity";
 import { SiteRepository } from "../infrastructure/site.repository";
+import { CreateSiteRequest } from "./site.types";
 
 export class SiteService{
     constructor(
@@ -26,8 +27,14 @@ export class SiteService{
     }
 
     async createSite(
-        site: Site
+        request: CreateSiteRequest
     ): Promise<Site>{
+        const site = new Site();
+
+        site.user = request.user;
+        site.name = request.name;
+        site.type = request.type;
+        
         return this.siteRepository.save(site);
     }
 
@@ -39,7 +46,7 @@ export class SiteService{
         if(!site){
             throw new NotFoundError(`Site ${siteId} not found`);
         }
-        
+
         return this.siteRepository.remove(site);
     }
 }
