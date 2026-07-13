@@ -1,12 +1,10 @@
-import { User } from "../../users/domain/user.entity"
-
 export type SiteType = 
     | "home"
     | "shop"
     | "office"
 
 export interface CreateSiteRequest {
-    user: User,
+    userId: string,
     name: string,
     type: SiteType
 }

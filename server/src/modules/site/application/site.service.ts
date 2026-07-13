@@ -1,11 +1,13 @@
 import { NotFoundError } from "../../../shared/errors/not.found.error";
+import { UserRepository } from "../../user/infrastructure/user.repository";
 import { Site } from "../domain/site.entity";
 import { SiteRepository } from "../infrastructure/site.repository";
-import { CreateSiteRequest } from "./site.types";
+import { CreateSiteRequest } from "./requests/create.site.request";
 
 export class SiteService{
     constructor(
-        private readonly siteRepository: SiteRepository
+        private readonly siteRepository: SiteRepository,
+        private readonly userRepository: UserRepository
     ){}
 
     async getSitesByUser(
@@ -29,12 +31,18 @@ export class SiteService{
     async createSite(
         request: CreateSiteRequest
     ): Promise<Site>{
+        const user = await this.userRepository.findByid(request.userId);
+
+        if(!user){
+            throw new NotFoundError(`User not found`);
+        }
+
         const site = new Site();
 
-        site.user = request.user;
+        site.user = user;
         site.name = request.name;
         site.type = request.type;
-        
+
         return this.siteRepository.save(site);
     }
 

@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "../../../database/entities/base.entity";
 import { Device } from "../../device/domain/device.entity";
-import { User } from "../../users/domain/user.entity";
+import { User } from "../../user/domain/user.entity";
 
 @Entity("sites")
 export class Site extends BaseEntity {
