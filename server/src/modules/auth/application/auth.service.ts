@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "@iot/contracts";
+import { LoginRequest, LoginResponse, RefreshTokenRequest, RefreshTokenResponse, RegisterRequest, RegisterResponse } from "@iot/contracts";
 import { TransactionManager } from "../../../infrastructure/database/transaction.manager";
 import { PasswordHasher } from "../../../shared/core/security/password/password.hasher";
 import { TokenProvider } from "../../../shared/core/security/token/token.provider";
@@ -62,5 +62,11 @@ export class AuthService {
         if(!passwordMatches) throw new UnauthorizedError("Invalid email or password");
 
         return this.tokenProvider.generateTokenPair(user.id);
+    }
+
+    async refresh(request: RefreshTokenRequest): Promise<RefreshTokenResponse> {
+        const claims = await this.tokenProvider.verifyRefreshToken(request.refreshToken);
+
+        return this.tokenProvider.generateTokenPair(claims.sub);
     }
 }

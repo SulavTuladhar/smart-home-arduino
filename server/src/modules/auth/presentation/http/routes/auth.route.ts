@@ -14,6 +14,9 @@ export class AuthRoutes {
         router.post("/login", 
             asyncHandler(controller.login.bind(controller))
         );
+        router.post("/refresh",
+            asyncHandler(controller.refresh.bind(controller))
+        );
         
         return router;
     }
