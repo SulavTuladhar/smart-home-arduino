@@ -22,7 +22,9 @@ export class UserRepository extends BaseRepository<User>{
         manager?: EntityManager
     ){
         return this.getRepository(manager).findOne({
-            where: {email}
+            where: {
+                email: email.toLowerCase()
+            }
         })
     }
 }

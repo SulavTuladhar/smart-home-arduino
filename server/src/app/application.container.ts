@@ -10,6 +10,7 @@ import { RelayRepository } from "../modules/relays/infrastructure/relay.reposito
 import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
 import { SiteService } from "../modules/site/application/site.service";
 import { SiteRepository } from "../modules/site/infrastructure/site.repository";
+import { UserService } from "../modules/user/application/user.service";
 import { UserRepository } from "../modules/user/infrastructure/user.repository";
 import { BcryptPasswordHasher } from "../shared/core/security/password/bcrypt.password.hasher";
 import { PasswordHasher } from "../shared/core/security/password/password.hasher";
@@ -36,7 +37,8 @@ export class ApplicationContainer {
     services!: {
         deviceService: DeviceService,
         relayService: RelayService,
-        siteService: SiteService
+        siteService: SiteService,
+        userService: UserService
     }
 
     controllers!: {
@@ -94,11 +96,13 @@ export class ApplicationContainer {
         );
         const deviceService = new DeviceService(this.repositories.deviceRepository, relayService);
         const siteService = new SiteService(this.repositories.siteRepository, this.repositories.userRepository);
+        const userService = new UserService(this.repositories.userRepository, this.core.passwordHasher, this.core.tokenProvider);
 
         this.services = {
             relayService,
             deviceService,
-            siteService
+            siteService,
+            userService
         }
     }
 
