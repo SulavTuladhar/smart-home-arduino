@@ -1,4 +1,7 @@
 import { authConfig } from "../configuration/auth.config";
+import { AppDataSource } from "../database/data-source";
+import { TransactionManager } from "../infrastructure/database/transaction.manager";
+import { TypeOrmTransactionManager } from "../infrastructure/database/typeorm.transaction.manager";
 import { DeviceOfflineMonitor } from "../infrastructure/monitoring/device.offline.monitor";
 import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
@@ -10,6 +13,7 @@ import { RelayRepository } from "../modules/relays/infrastructure/relay.reposito
 import { RelayController } from "../modules/relays/presentation/http/controllers/relay.controller";
 import { SiteService } from "../modules/site/application/site.service";
 import { SiteRepository } from "../modules/site/infrastructure/site.repository";
+import { UserService } from "../modules/user/application/user.service";
 import { UserRepository } from "../modules/user/infrastructure/user.repository";
 import { BcryptPasswordHasher } from "../shared/core/security/password/bcrypt.password.hasher";
 import { PasswordHasher } from "../shared/core/security/password/password.hasher";
@@ -36,7 +40,8 @@ export class ApplicationContainer {
     services!: {
         deviceService: DeviceService,
         relayService: RelayService,
-        siteService: SiteService
+        siteService: SiteService,
+        userService: UserService
     }
 
     controllers!: {
@@ -53,10 +58,15 @@ export class ApplicationContainer {
         deviceOfflineMonitor: DeviceOfflineMonitor
     }
 
+    database!: {
+        transactionManager: TransactionManager
+    }
+
     constructor(){
+        this.initilizeCore();
         this.initilizeRepositories();
         this.initializeInfrastructures();
-        this.initilizeCore();
+        this.initializeDatabase();
         this.initializeServices();
         this.initalizeControllers();
         this.initializeMonitoring();
@@ -87,6 +97,12 @@ export class ApplicationContainer {
         }
     }
 
+    private initializeDatabase(): void {
+        this.database = {
+            transactionManager: new TypeOrmTransactionManager(AppDataSource)
+        }
+    }
+
     private initializeServices(): void {
         const relayService = new RelayService(
             this.repositories.relayRepository,
@@ -94,11 +110,19 @@ export class ApplicationContainer {
         );
         const deviceService = new DeviceService(this.repositories.deviceRepository, relayService);
         const siteService = new SiteService(this.repositories.siteRepository, this.repositories.userRepository);
+        const userService = new UserService(
+            this.repositories.userRepository,
+            this.repositories.siteRepository, 
+            this.core.passwordHasher, 
+            this.core.tokenProvider,
+            this.database.transactionManager
+        );
 
         this.services = {
             relayService,
             deviceService,
-            siteService
+            siteService,
+            userService
         }
     }
 
