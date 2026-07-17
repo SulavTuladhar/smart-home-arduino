@@ -2,6 +2,7 @@ import jwt, { JwtPayload, SignOptions, VerifyOptions } from "jsonwebtoken";
 import { AuthConfig } from "../../../../configuration";
 import { AccessTokenClaims, RefreshTokenClaims } from "./token.claims";
 import { TokenPair, TokenProvider } from "./token.provider";
+import { UnauthorizedError } from "../../../errors/unauthorized.error";
 
 export class JwtTokenProvider implements TokenProvider{
     constructor(
@@ -47,15 +48,23 @@ export class JwtTokenProvider implements TokenProvider{
     }
 
     async verifyAccessToken(token: string): Promise<AccessTokenClaims> {
+       try{
         const payload = jwt.verify(token, this.config.accessSecret, this.createVerifyOptions());
 
         return this.validateAccessClaims(payload);
+       }catch{
+        throw new UnauthorizedError("Invalid or expired access token");
+       }
     }
 
     async verifyRefreshToken(token: string): Promise<RefreshTokenClaims> {
-        const payload = jwt.verify(token, this.config.refreshSecret, this.createVerifyOptions());
+        try{
+            const payload = jwt.verify(token, this.config.refreshSecret, this.createVerifyOptions());
 
-        return this.validateRefreshClaims(payload);
+            return this.validateRefreshClaims(payload);
+        }catch{
+            throw new UnauthorizedError("Invalid or expired refresh token");
+        }
     }
 
     private createSignOptions(

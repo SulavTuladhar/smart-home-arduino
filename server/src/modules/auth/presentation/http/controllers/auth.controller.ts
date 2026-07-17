@@ -34,4 +34,18 @@ export class AuthController {
             result
         )
     }
+
+    async refresh(
+        request: Request,
+        response: Response
+    ): Promise<void>{
+        const result = await this.authService.refresh(request.body);
+
+        sendSuccess(
+            response,
+            200,
+            "Token refreshed successfully",
+            result
+        )
+    }
 }

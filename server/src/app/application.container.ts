@@ -23,6 +23,7 @@ import { JwtTokenProvider } from "../shared/core/security/token/jwt.token.provid
 import { TokenProvider } from "../shared/core/security/token/token.provider";
 import { Clock } from "../shared/core/time/clock";
 import { SystemClock } from "../shared/core/time/system.clock";
+import { AuthMiddleware } from "../shared/http/middleware/auth.middleware";
 
 export class ApplicationContainer {
 
@@ -65,11 +66,18 @@ export class ApplicationContainer {
         transactionManager: TransactionManager
     }
 
+    middlewares!: {
+        auth: {
+            authMiddleware: AuthMiddleware
+        }
+    }
+
     constructor(){
         this.initilizeCore();
         this.initilizeRepositories();
         this.initializeInfrastructures();
         this.initializeDatabase();
+        this.initializeMiddlewares();
         this.initializeServices();
         this.initalizeControllers();
         this.initializeMonitoring();
@@ -140,6 +148,14 @@ export class ApplicationContainer {
     private initializeMonitoring(): void {
         this.monitoring = {
             deviceOfflineMonitor: new DeviceOfflineMonitor(this.services.deviceService)
+        }
+    }
+
+    private initializeMiddlewares(): void {
+        this.middlewares = {
+            auth: {
+                authMiddleware: new AuthMiddleware(this.core.tokenProvider)
+            }
         }
     }
 
