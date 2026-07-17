@@ -5,6 +5,8 @@ import { TypeOrmTransactionManager } from "../infrastructure/database/typeorm.tr
 import { DeviceOfflineMonitor } from "../infrastructure/monitoring/device.offline.monitor";
 import { createMqttClient } from "../infrastructure/mqtt/mqtt.client";
 import { MqttPublisher } from "../infrastructure/mqtt/mqtt.publisher";
+import { AuthService } from "../modules/auth/application/auth.service";
+import { AuthController } from "../modules/auth/presentation/http/controllers/auth.controller";
 import { DeviceService } from "../modules/device/application/device.service";
 import { DeviceRepository } from "../modules/device/infrastructure/device.repository";
 import { DeviceController } from "../modules/device/presentation/http/controllers/device.controller";
@@ -41,12 +43,13 @@ export class ApplicationContainer {
         deviceService: DeviceService,
         relayService: RelayService,
         siteService: SiteService,
-        userService: UserService
+        authService: AuthService
     }
 
     controllers!: {
         deviceController: DeviceController,
-        relayController: RelayController
+        relayController: RelayController,
+        authController: AuthController
     }
 
     infrastructures!: {
@@ -110,11 +113,10 @@ export class ApplicationContainer {
         );
         const deviceService = new DeviceService(this.repositories.deviceRepository, relayService);
         const siteService = new SiteService(this.repositories.siteRepository, this.repositories.userRepository);
-        const userService = new UserService(
+        const authService = new AuthService(
             this.repositories.userRepository,
             this.repositories.siteRepository, 
             this.core.passwordHasher, 
-            this.core.tokenProvider,
             this.database.transactionManager
         );
 
@@ -122,14 +124,15 @@ export class ApplicationContainer {
             relayService,
             deviceService,
             siteService,
-            userService
+            authService
         }
     }
 
     private initalizeControllers(): void {
         this.controllers = {
             relayController: new RelayController(this.services.relayService),
-            deviceController: new DeviceController(this.services.deviceService)
+            deviceController: new DeviceController(this.services.deviceService),
+            authController: new AuthController(this.services.authService)
         }
     }
 
