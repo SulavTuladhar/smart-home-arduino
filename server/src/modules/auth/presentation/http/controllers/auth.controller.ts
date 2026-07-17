@@ -20,4 +20,18 @@ export class AuthController {
             result
         );
     }
+
+    async login(
+        request: Request,
+        response: Response
+    ): Promise<void> {
+        const result = await this.authService.login(request.body);
+
+        sendSuccess(
+            response,
+            200,
+            "Logged in successfully",
+            result
+        )
+    }
 }

@@ -10,9 +10,9 @@ export class ApiRouter {
     ): Router {
         const router = Router();
 
-        router.use(DevicesRoutes.create(container.controllers.deviceController));
-        router.use(RelayRoutes.create(container.controllers.relayController));
-        router.use(AuthRoutes.create(container.controllers.authController));
+        router.use("/device", DevicesRoutes.create(container.controllers.deviceController));
+        router.use("/relay", RelayRoutes.create(container.controllers.relayController));
+        router.use("/auth", AuthRoutes.create(container.controllers.authController));
 
         return router;
     }

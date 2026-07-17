@@ -11,6 +11,9 @@ export class AuthRoutes {
         router.post("/register", 
             asyncHandler(controller.register.bind(controller))
         );
+        router.post("/login", 
+            asyncHandler(controller.login.bind(controller))
+        );
         
         return router;
     }

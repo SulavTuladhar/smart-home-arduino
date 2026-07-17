@@ -89,7 +89,7 @@ export class JwtTokenProvider implements TokenProvider{
     }
 
     private validateRefreshClaims(payload: string | JwtPayload): RefreshTokenClaims {
-        if(typeof payload === "string" || typeof payload.sub !== "string" || payload.type !== "access"){
+        if(typeof payload === "string" || typeof payload.sub !== "string" || payload.type !== "refresh"){
             throw new Error("Invalid refresh token payload");
         }
 

@@ -117,6 +117,7 @@ export class ApplicationContainer {
             this.repositories.userRepository,
             this.repositories.siteRepository, 
             this.core.passwordHasher, 
+            this.core.tokenProvider,
             this.database.transactionManager
         );
 

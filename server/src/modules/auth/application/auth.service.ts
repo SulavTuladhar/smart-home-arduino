@@ -7,12 +7,14 @@ import { Site } from "../../site/domain/site.entity";
 import { SiteRepository } from "../../site/infrastructure/site.repository";
 import { UserRepository } from "../../user/infrastructure/user.repository";
 import { User } from "../../user/domain/user.entity";
+import { UnauthorizedError } from "../../../shared/errors/unauthorized.error";
 
 export class AuthService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly siteRepository: SiteRepository,
         private readonly passwordHasher: PasswordHasher,
+        private readonly tokenProvider: TokenProvider,
         private readonly transactionManager: TransactionManager,
     ){}
 
@@ -49,6 +51,16 @@ export class AuthService {
     }
 
     async login(request: LoginRequest): Promise<LoginResponse>{
-        throw new Error("IMp")
+        const email = request.email.trim().toLowerCase();
+
+        const user = await this.userRepository.findByEmail(email);
+
+        if(!user) throw new UnauthorizedError("Invalid email or password");
+
+        const passwordMatches = await this.passwordHasher.compare(request.password, user.passwordHash);
+
+        if(!passwordMatches) throw new UnauthorizedError("Invalid email or password");
+
+        return this.tokenProvider.generateTokenPair(user.id);
     }
 }
