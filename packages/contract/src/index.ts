@@ -1,1 +1,1 @@
-export * from "./auth/register.contract";
+export * from "./auth";
